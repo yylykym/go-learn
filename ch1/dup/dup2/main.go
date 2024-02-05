@@ -9,27 +9,27 @@ import (
 )
 
 func main() {
-	counts := make(map[string]int)
-	files := os.Args[1:]
-	if len(files) == 0 {
-		countLines(os.Stdin, counts)
+	wordCount := make(map[string]int)
+	inputArgs := os.Args[1:]
+	if len(inputArgs) == 0 {
+		countLine(os.Stdin, wordCount)
 	}
-	for _, arg := range files {
-		open, err := os.Open(arg)
+	for _, arg := range inputArgs {
+		file, err := os.Open(arg)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "dup2: %v\\n", err)
+			continue
 		}
-		countLines(open, counts)
-		open.Close()
+		countLine(file, wordCount)
+		file.Close()
 	}
-	for line, n := range counts {
+	for line, n := range wordCount {
 		fmt.Printf("%d\t%s\n", n, line)
 	}
 }
 
-func countLines(f *os.File, counts map[string]int) {
-	input := bufio.NewScanner(f)
-	for input.Scan() {
-		counts[input.Text()]++
+func countLine(f *os.File, counts map[string]int) {
+	lineReader := bufio.NewScanner(f)
+	for lineReader.Scan() {
+		counts[lineReader.Text()]++
 	}
 }
